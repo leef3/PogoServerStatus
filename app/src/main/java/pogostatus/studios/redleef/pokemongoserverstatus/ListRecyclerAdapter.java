@@ -13,24 +13,11 @@ import java.util.ArrayList;
  */
 public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ViewHolder> {
 
-    //Interface for Fragment to Implement
-    public interface OnItemClickListener
-    {
-        public void onItemClicked(int position);
-    }
-    public interface OnItemLongClickListener
-    {
-        public boolean onItemLongClicked(int position);
-    }
-
     private ArrayList<StatusItem> itemData;
 
-    private ServerActivity mActivity;
-
-    public ListRecyclerAdapter(ArrayList<StatusItem> itemData, ServerActivity mActivity)
+    public ListRecyclerAdapter(ArrayList<StatusItem> itemData)
     {
         this.itemData = itemData;
-        this.mActivity = mActivity;
     }
 
     @Override
@@ -53,16 +40,19 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
             //0 is Online No Prob
             case 0:
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_green);
+                viewHolder.mSmallText.setText("ONLINE");
                 break;
             //1 is Offline is Prob
             case 1:
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_orange);
+                viewHolder.mSmallText.setText("OFFLINE");
                 break;
             //2 is Unreachable or unknown
             case 2:
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_grey);
+                viewHolder.mSmallText.setText("UNKNOWN");
         }
-        viewHolder.mImage.setText("0");
+        viewHolder.mImage.setText("");
 
 
     }
