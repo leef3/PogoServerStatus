@@ -2,6 +2,7 @@ package pogostatus.studios.redleef.pokemongoserverstatus;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,10 @@ import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 
 public class ServerActivity extends AppCompatActivity {
 
@@ -60,7 +64,7 @@ public class ServerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class RetrieveHtmlTask extends AsyncTask<String, Integer, String>
+    private class RetrieveHtmlTask extends AsyncTask<String, Integer, ArrayList<StatusItem>>
     {
         @Override
         protected void onPreExecute()
@@ -69,9 +73,11 @@ public class ServerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params)
+        protected ArrayList<StatusItem> doInBackground(String... params)
         {
             String myString = params[0];
+
+            ArrayList<StatusItem> toReturn = new ArrayList<StatusItem>();
 
             int i = 0;
             publishProgress(i);
@@ -79,36 +85,37 @@ public class ServerActivity extends AppCompatActivity {
             try
             {
                 Document doc = Jsoup.connect("http://www.mmoserverstatus.com/pokemon_go").get();
-                Elements newsHeadlines = doc.select("status");
                 Elements mTest = doc.getElementsByClass("white");
 
                 if(!mTest.isEmpty())
                 {
-                    String toReturn = "";
                     for(int x = 0; x < mTest.size(); x++)
                     {
-                        toReturn = toReturn + " | " + mTest.get(x).toString();
+                        StatusItem toAdd = new StatusItem("Unknown", 2);
+
+                        String region = mTest.get(x).text();
+                        toAdd.Region = region;
+                        Element status = mTest.get(x).getElementsByClass("fa fa-check green").first();
+
+                        if(status != null)
+                        {
+                            toAdd.Status = 0;
+                        }
+                        else
+                        {
+                            toAdd.Status = 1;
+                        }
+
+                        toReturn.add(toAdd);
                     }
                     return toReturn;
-                }
-                else
-                {
-                    /*
-                    Snackbar.make(view, "Update Failed: Malformed HTML Tags", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                            */
                 }
             }
             catch(Exception e)
             {
-                /*
-                Snackbar.make(view, "Update Failed: Server Status Source Unreachable", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                        */
-
-                return e.getMessage();
+                return toReturn;
             }
-            return "Not sure what happened";
+            return toReturn;
         }
 
         @Override
@@ -118,12 +125,21 @@ public class ServerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result)
+        protected void onPostExecute(ArrayList<StatusItem> result)
         {
             super.onPostExecute(result);
 
-            TextView contentCount = (TextView)findViewById(R.id.contentCount);
-            contentCount.setText(result);
+            if(result.isEmpty())
+            {
+                CoordinatorLayout mLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
+                Snackbar.make(mLayout, "Update Failed: Server Status Source Unreachable", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            else
+            {
+                
+            }
+
 
         }
     }
