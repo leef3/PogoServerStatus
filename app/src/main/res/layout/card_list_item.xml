@@ -20,7 +20,7 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:text="99"
@@ -29,7 +29,7 @@
                 android:textColor="@color/colorPrimary"
                 android:layout_marginRight="10dp"
                 android:id="@+id/small_card_image"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentLeft="true"  />
 
@@ -66,6 +66,22 @@
                 android:id="@+id/cardTextSmall"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="3dp"
+                android:paddingRight="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:layout_below="@+id/cardTextLarge"
+                android:layout_toRightOf="@+id/cardTextSmall"
+                android:textColor="#EEEEEE"
+                android:text=""
+                android:id="@+id/cardTextSmallTwo"
+                android:layout_gravity="center_horizontal"
                 android:paddingRight="8dp"
                 android:paddingLeft="8dp"
                 android:paddingTop="2dp"

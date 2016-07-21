@@ -3,10 +3,11 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#E0E0E0"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="pogostatus.studios.redleef.pokemongoserverstatus.ServerActivity"
+    tools:context="pogostatus.studios.redleef.pogoserverstatus.ServerActivity"
     tools:showIn="@layout/activity_server">
 
     <LinearLayout

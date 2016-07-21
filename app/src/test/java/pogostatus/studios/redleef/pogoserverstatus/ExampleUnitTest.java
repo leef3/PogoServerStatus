@@ -1,4 +1,4 @@
-package pogostatus.studios.redleef.pokemongoserverstatus;
+package pogostatus.studios.redleef.pogoserverstatus;
 
 import org.junit.Test;
 

@@ -1,9 +1,11 @@
-package pogostatus.studios.redleef.pokemongoserverstatus;
+package pogostatus.studios.redleef.pogoserverstatus;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,8 +34,10 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder viewHolder,final int position)
     {
-        viewHolder.mLargeText.setText(itemData.get(position).Region);
+        viewHolder.mLargeText.setText(itemData.get(position).mCountry.name);
         viewHolder.mSmallText.setText("");
+        viewHolder.mSmallTextTwo.setText("");
+
         //Set color Categories
         switch(itemData.get(position).Status)
         {
@@ -41,18 +45,59 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
             case 0:
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_green);
                 viewHolder.mSmallText.setText("ONLINE");
+                viewHolder.mSmallTextTwo.setVisibility(View.INVISIBLE);
                 break;
             //1 is Offline is Prob
             case 1:
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_orange);
                 viewHolder.mSmallText.setText("OFFLINE");
+
+                if(itemData.get(position).Time.length() > 0)
+                {
+                    viewHolder.mSmallTextTwo.setVisibility(View.VISIBLE);
+                    viewHolder.mSmallTextTwo.setBackgroundResource(R.drawable.button_wire_filled_grey);
+                    viewHolder.mSmallTextTwo.setText(itemData.get(position).Time);
+                }
                 break;
             //2 is Unreachable or unknown
             case 2:
+                viewHolder.mSmallTextTwo.setVisibility(View.INVISIBLE);
                 viewHolder.mSmallText.setBackgroundResource(R.drawable.button_wire_filled_grey);
                 viewHolder.mSmallText.setText("UNKNOWN");
         }
-        viewHolder.mImage.setText("");
+        viewHolder.mImage.setImageResource(itemData.get(position).mCountry.image);
+
+        /*
+        if(itemData.get(position).Region.contains("Australia"))
+        {
+
+        }else if(itemData.get(position).Region.contains("France"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.france);
+        }else if(itemData.get(position).Region.contains("Germany"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.germany);
+        }else if(itemData.get(position).Region.contains("Netherlands"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.netherlands);
+        }else if(itemData.get(position).Region.contains("Zealand"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.aus);
+        }else if(itemData.get(position).Region.contains("Other"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.eu);
+        }else if(itemData.get(position).Region.contains("Kingdom"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.uk);
+        }else if(itemData.get(position).Region.contains("States"))
+        {
+            viewHolder.mImage.setImageResource(R.drawable.us);
+        }
+        else
+        {
+            viewHolder.mImage.setImageResource(R.drawable.eu);
+        }
+        */
 
 
     }
@@ -61,7 +106,8 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     {
         public TextView mLargeText;
         public TextView mSmallText;
-        public TextView mImage;
+        public TextView mSmallTextTwo;
+        public ImageView mImage;
         public View itemLayoutView;
 
         public ViewHolder(View itemLayoutView)
@@ -70,7 +116,8 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
             this.itemLayoutView = itemLayoutView;
             mLargeText = (TextView)itemLayoutView.findViewById(R.id.cardTextLarge);
             mSmallText = (TextView)itemLayoutView.findViewById(R.id.cardTextSmall);
-            mImage = (TextView)itemLayoutView.findViewById(R.id.small_card_image);
+            mImage = (ImageView)itemLayoutView.findViewById(R.id.small_card_image);
+            mSmallTextTwo = (TextView)itemLayoutView.findViewById(R.id.cardTextSmallTwo);
         }
     }
 

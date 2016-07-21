@@ -1,7 +1,11 @@
-package pogostatus.studios.redleef.pokemongoserverstatus;
+package pogostatus.studios.redleef.pogoserverstatus;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -12,34 +16,45 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ServerActivity extends AppCompatActivity {
 
     ListRecyclerAdapter mAdapter;
     ArrayList<StatusItem> toReturn;
     RecyclerView recyclerView;
+    public static CountryList mCountries;
+    Context context;
+    LoadToast lt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Server Status for Pokemon Go");
         setSupportActionBar(toolbar);
+
+        context = this;
+
+        mCountries = new CountryList();
 
         toReturn = new ArrayList<StatusItem>();
 
@@ -91,6 +106,7 @@ public class ServerActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 new RetrieveHtmlTask().execute("What");
+
                 /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -125,14 +141,19 @@ public class ServerActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
-
+            lt = new LoadToast(context);
+            lt.setText("Checking Server");
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int height = size.y;
+            lt.setTranslationY(height/2);
+            lt.show();
         }
 
         @Override
         protected ArrayList<StatusItem> doInBackground(String... params)
         {
-            String myString = params[0];
-
             toReturn.clear();
             int i = 0;
             publishProgress(i);
@@ -146,10 +167,26 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     for(int x = 0; x < mTest.size(); x++)
                     {
-                        StatusItem toAdd = new StatusItem("Unknown", 2);
-
                         String region = mTest.get(x).text();
-                        toAdd.Region = region;
+                        String time = "";
+                        //Parse Time Here
+
+                        String[] arr = region.split("\\d+", 2);
+                        String pt1 = arr[0].trim();
+                        if(arr.length > 1)
+                        {
+                            String pt2 = region.substring(pt1.length()).trim();
+                            time =  pt2;
+                        }
+
+                        //Feed into CountryList Find Func here
+                        Country current = mCountries.FindCountry(region);
+                        if(current == null)
+                        {
+                            current = new Country(region, R.drawable.other);
+                        }
+
+                        StatusItem toAdd = new StatusItem(current, 2, time);
 
                         Element owet2 = mTest.get(x).getAllElements().last().getAllElements().last().getAllElements().last().getAllElements().last();
 
@@ -193,6 +230,7 @@ public class ServerActivity extends AppCompatActivity {
 
             if(result.isEmpty())
             {
+                lt.error();
                 CoordinatorLayout mLayout = (CoordinatorLayout)findViewById(R.id.coordinatorLayout);
                 Snackbar.make(mLayout, "Update Failed: Server Status Source Unreachable", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -201,6 +239,7 @@ public class ServerActivity extends AppCompatActivity {
             {
                 ListRecyclerAdapter newAdapter = new ListRecyclerAdapter(result);
                 recyclerView.swapAdapter(newAdapter, true);
+                lt.success();
             }
         }
     }

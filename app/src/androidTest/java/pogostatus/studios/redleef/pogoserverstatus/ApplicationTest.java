@@ -1,4 +1,4 @@
-package pogostatus.studios.redleef.pokemongoserverstatus;
+package pogostatus.studios.redleef.pogoserverstatus;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
